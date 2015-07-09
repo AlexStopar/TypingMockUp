@@ -11,8 +11,11 @@ public class TypeWindow : MonoBehaviour {
 	PulseType currentPulse = PulseType.NONE;
 	// Use this for initialization
 	void Start () {
-		typeBackground = new GameObject ();
-
+		typeBackground = new GameObject ("background");
+		typeBackground.AddComponent<SpriteRenderer> ();
+		typeBackground.GetComponent<SpriteRenderer> ().sprite = (Sprite)Resources.Load<Sprite> ("Sprites/TypeBackground");
+		typeBackground.transform.parent = this.transform;
+		typeBackground.transform.localPosition = Vector3.forward;
 	}
 
 	public void CreateWord(string targetWord, int fontSize, Font typeFont)
@@ -26,7 +29,7 @@ public class TypeWindow : MonoBehaviour {
 		mesh.font = typeFont;
 		mesh.fontSize = fontSize;
 		mesh.color = Color.green;
-		typeTarget.transform.parent = transform;
+		typeTarget.transform.parent = this.transform;
 		mesh.anchor = TextAnchor.MiddleCenter;
 		if (meshRender.bounds.size.y > wordHeight) {
 			this.transform.localScale *= wordHeight/meshRender.bounds.size.y;
