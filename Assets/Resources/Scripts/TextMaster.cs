@@ -11,7 +11,7 @@ public class TextMaster : MonoBehaviour {
 
 	public Font typeFont;
 	public int fontSize = 20;
-	public float pulseSpeed = 0.03f;
+	public float pulseSpeed = 0.5f;
 	// Use this for initialization
 	void Start () {
 		createdWords = new List<GameObject> ();
@@ -25,7 +25,7 @@ public class TextMaster : MonoBehaviour {
 	}
 
 	void LoadWords() {
-		possibleWords.Add ("Tell it like it is");
+		possibleWords.Add ("Duh");
 	}
 
 	GameObject CreateMesh(string targetWord)
@@ -40,11 +40,11 @@ public class TextMaster : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-		if (targetedWord != null && Input.inputString.Length > 0 && 
+		if (targetedWord != null && !targetedWord.name.Equals ("") && Input.inputString.Length > 0 && 
 		    Input.inputString.Contains(targetedWord.name[0].ToString()))
-			targetedWord.GetComponent<TypeWindow>().CutMesh ();
+			targetedWord.GetComponent<TypeWindow>().CutMesh (Time.time);
 
-		if(targetedWord != null) targetedWord.GetComponent<TypeWindow>().PulseMesh (pulseSpeed);
+		if(targetedWord != null && !targetedWord.name.Equals ("")) targetedWord.GetComponent<TypeWindow>().PulseMesh (pulseSpeed);
 	}
 
 
