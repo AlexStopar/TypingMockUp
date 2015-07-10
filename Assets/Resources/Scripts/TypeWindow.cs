@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+public enum FadeType {FADEIN, FADEOUT, NOFADE};
 
 public class TypeWindow : MonoBehaviour {
 
@@ -9,13 +10,14 @@ public class TypeWindow : MonoBehaviour {
 	Vector3 originalWordScale; //Scale for original word when pulsing
 	float wordHeight = 1.0f;
 	float padding = 0.2f;
-	bool isFading = false;
+	public bool isDead = false;
 	float startFadeTime = 0.0f;
-	public float fadeDuration = 0.5f;
+	public float fadeDuration = 0.2f;
 	PulseType currentPulse = PulseType.NONE;
+	public FadeType currentFade = FadeType.FADEIN;
 	// Use this for initialization
 	void Start () {
-
+		startFadeTime = Time.time;
 	}
 
 	public void CreateWord(string targetWord, int fontSize, Font typeFont)
@@ -33,13 +35,15 @@ public class TypeWindow : MonoBehaviour {
 		mesh.anchor = TextAnchor.MiddleCenter;
 		if (meshRender.bounds.size.y > wordHeight) 
 			this.transform.localScale *= wordHeight/meshRender.bounds.size.y;
-
+		meshRender.material.color = new Color (meshRender.material.color.r, meshRender.material.color.g, meshRender.material.color.b, 0.0f);
 
 
 		//Make background fit word
 		typeBackground = new GameObject ("background");
 		typeBackground.AddComponent<SpriteRenderer> ();
-		typeBackground.GetComponent<SpriteRenderer> ().sprite = (Sprite)Resources.Load<Sprite> ("Sprites/TypeBackground");
+		SpriteRenderer spriteRender = typeBackground.GetComponent<SpriteRenderer> ();
+		spriteRender.sprite = (Sprite)Resources.Load<Sprite> ("Sprites/TypeBackground");
+		spriteRender.color = new Color (spriteRender.color.r, spriteRender.color.g, spriteRender.color.b, 0.0f);
 		typeBackground.transform.parent = this.transform;
 		typeBackground.transform.localPosition = Vector3.forward;
 		if (meshRender.bounds.size.x + (padding * 2.0f) > typeBackground.GetComponent<SpriteRenderer> ().bounds.size.x) {
@@ -52,6 +56,8 @@ public class TypeWindow : MonoBehaviour {
 
 	public void CutMesh(float time)
 	{
+		if (typeTarget.GetComponent<MeshRenderer> ().material.color.a < 0.9f)
+			return;
 		if (!this.name.Equals("")) {
 			this.name = this.name.Substring (1);
 			typeTarget.GetComponent<TextMesh> ().text = 
@@ -66,20 +72,31 @@ public class TypeWindow : MonoBehaviour {
 			if (this.name.Equals (""))
 			{
 				startFadeTime = time;
-				isFading = true;
+				currentFade = FadeType.FADEOUT;
 			}
 		}
 
 	}
 	// Update is called once per frame
 	void Update () {
-		if (isFading) {
+		if (currentFade == FadeType.FADEIN) {
+			float t = (Time.time - startFadeTime) / fadeDuration;
+			Color prevColor = typeBackground.GetComponent<SpriteRenderer>().color;
+			typeBackground.GetComponent<SpriteRenderer>().color = new Color (prevColor.r, prevColor.g, prevColor.b, Mathf.SmoothStep (0.0f, 1.0f, t));
+			prevColor = typeTarget.GetComponent<MeshRenderer>().material.color;
+			typeTarget.GetComponent<MeshRenderer>().material.color = new Color (prevColor.r, prevColor.g, prevColor.b, Mathf.SmoothStep (0.0f, 1.0f, t));
+		}
+		else if (currentFade == FadeType.FADEOUT) {
 			float t = (Time.time - startFadeTime) / fadeDuration;
 			Color prevColor = typeBackground.GetComponent<SpriteRenderer>().color;
 			typeBackground.GetComponent<SpriteRenderer>().color = new Color (prevColor.r, prevColor.g, prevColor.b, Mathf.SmoothStep (1.0f, 0.0f, t));
 		}
-		if (typeBackground.GetComponent<SpriteRenderer> ().color.a < 0.01f)
-			Destroy (this);
+		if (typeBackground.GetComponent<SpriteRenderer> ().color.a >= 1.0f && currentFade == FadeType.FADEIN) {
+			currentFade = FadeType.NOFADE;
+		}
+		if (typeBackground.GetComponent<SpriteRenderer> ().color.a < 0.01f && currentFade == FadeType.FADEOUT) {
+			isDead = true;
+		}
 	}
 
 	public void PulseMesh(float pulseSpeed)
