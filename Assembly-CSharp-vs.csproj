@@ -48,6 +48,7 @@
   <ItemGroup>
      <Compile Include="Assets\Resources\Scripts\TextMaster.cs" />
      <Compile Include="Assets\Resources\Scripts\TypeWindow.cs" />
+     <None Include="Assets\Resources\WordLists\LongWordList.txt" />
      <None Include="Assets\Resources\WordLists\BeginnerWordList.txt" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>

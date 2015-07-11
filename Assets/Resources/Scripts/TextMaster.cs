@@ -8,7 +8,7 @@ enum PulseType {NONE, IN, OUT, TOTAL };
 
 struct WordType
 {
-	public string word;
+	public List<string> lines;
 	public bool isUsed;
 };
 
@@ -17,18 +17,25 @@ public class TextMaster : MonoBehaviour {
 	List<GameObject> createdWords;
 	List<WordType> possibleWords;
 	public GameObject targetedWord;
+	WordType currentWord;
+	int currentLine;
+	public Vector3 windowPosition = new Vector3(0.0f, -3.5f, 0.0f);
 
 	public Font typeFont;
+	public int characterLimit = 42; //For each line for each word
 	public int fontSize = 20;
-	public float pulseSpeed = 0.5f;
+	public float pulseSpeed = 0.2f;
 	// Use this for initialization
 	void Start () {
 		createdWords = new List<GameObject> ();
 		possibleWords = new List<WordType> ();
-		LoadWords ("Assets/Resources/WordLists/BeginnerWordList.txt");
+		LoadWords ("Assets/Resources/WordLists/LongWordList.txt");
 		typeFont = (Font)Resources.Load("Fonts/unispace");
-		createdWords.Add(CreateMesh(possibleWords[Random.Range (0, possibleWords.Count)].word));
+		currentWord = possibleWords[Random.Range (0, possibleWords.Count)];
+		currentLine = 0;
+		createdWords.Add(CreateMesh(currentWord.lines[currentLine]));
 		targetedWord = createdWords[0];
+		targetedWord.transform.localPosition = windowPosition;
 	}
 
 	void LoadWords(string fileName) {
@@ -38,18 +45,31 @@ public class TextMaster : MonoBehaviour {
 		using (theReader) {
 			do {
 				line = theReader.ReadLine ();
-					
 				if (line != null) {
 					WordType addWord = new WordType ();
 					addWord.isUsed = false;
-					addWord.word = line;
+					addWord.lines = new List<string>();
+					if(line.Length <= characterLimit) addWord.lines.Add(line);
+					else 
+					{
+						while(line.Length >= characterLimit)
+						{
+							int cutoffPoint = characterLimit;
+							while(line[cutoffPoint] != ' ')
+							{
+								cutoffPoint--;
+							}
+							addWord.lines.Add(line.Substring(0, cutoffPoint));
+							line = line.Substring(cutoffPoint + 1);
+						}
+						addWord.lines.Add(line);
+					}
 					possibleWords.Add (addWord);
 				}
 			} while (line != null);
 
 			theReader.Close();
 		}
-		
 	}
 
 	GameObject CreateMesh(string targetWord)
@@ -76,8 +96,15 @@ public class TextMaster : MonoBehaviour {
 		if (targetedWord.GetComponent<TypeWindow>().isDead) {
 			Destroy(targetedWord);
 			createdWords.Clear();
-			createdWords.Add(CreateMesh(possibleWords[Random.Range (0, possibleWords.Count)].word));
+			if(currentLine >= currentWord.lines.Count - 1) 
+			{
+				currentWord = possibleWords[Random.Range (0, possibleWords.Count)];
+				currentLine = 0;
+			}
+			else currentLine ++;
+			createdWords.Add(CreateMesh(currentWord.lines[currentLine]));
 			targetedWord = createdWords[0];
+			targetedWord.transform.localPosition = windowPosition;
 			targetedWord.GetComponent<TypeWindow>().isDead = false;
 			targetedWord.GetComponent<TypeWindow>().currentFade = FadeType.FADEIN;
 		}

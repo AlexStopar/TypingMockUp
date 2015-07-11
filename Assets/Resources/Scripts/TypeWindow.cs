@@ -5,11 +5,18 @@ public enum FadeType {FADEIN, FADEOUT, NOFADE};
 
 public class TypeWindow : MonoBehaviour {
 
+	//Audio for Window
+	AudioClip typeSound;
+	AudioClip enterSound;
+	AudioClip exitSound;
+
 	GameObject typeTarget; //Where words take place
 	GameObject typeBackground; //Background that sizes with word
 	Vector3 originalWordScale; //Scale for original word when pulsing
-	float wordHeight = 1.0f;
-	float padding = 0.2f;
+	float wordHeight = 0.7f;
+	float padding = 0.2f; //Padding of words from sides in window
+	float verticalSizeReduction = 0.5f; //Make window shorter
+	float windowVolume = 0.5f;
 	public bool isDead = false;
 	float startFadeTime = 0.0f;
 	public float fadeDuration = 0.2f;
@@ -18,6 +25,10 @@ public class TypeWindow : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		startFadeTime = Time.time;
+		typeSound = Resources.Load<AudioClip> ("Sounds/Type");
+		enterSound = Resources.Load<AudioClip> ("Sounds/Enter");
+		exitSound = Resources.Load<AudioClip> ("Sounds/Exit");
+		AudioSource.PlayClipAtPoint(enterSound, Vector3.zero, windowVolume);
 	}
 
 	public void CreateWord(string targetWord, int fontSize, Font typeFont)
@@ -36,6 +47,7 @@ public class TypeWindow : MonoBehaviour {
 		if (meshRender.bounds.size.y > wordHeight) 
 			this.transform.localScale *= wordHeight/meshRender.bounds.size.y;
 		meshRender.material.color = new Color (meshRender.material.color.r, meshRender.material.color.g, meshRender.material.color.b, 0.0f);
+		//Add sound source on typeTarget
 
 
 		//Make background fit word
@@ -46,11 +58,11 @@ public class TypeWindow : MonoBehaviour {
 		spriteRender.color = new Color (spriteRender.color.r, spriteRender.color.g, spriteRender.color.b, 0.0f);
 		typeBackground.transform.parent = this.transform;
 		typeBackground.transform.localPosition = Vector3.forward;
-		if (meshRender.bounds.size.x + (padding * 2.0f) > typeBackground.GetComponent<SpriteRenderer> ().bounds.size.x) {
-			typeBackground.transform.localScale = new Vector3 ((meshRender.bounds.size.x + (padding * 2.0f)) /
-			typeBackground.GetComponent<SpriteRenderer> ().bounds.size.x * typeBackground.transform.localScale.x, 
-			typeBackground.transform.localScale.y, typeBackground.transform.localScale.z);
-		}
+
+		typeBackground.transform.localScale = new Vector3 ((meshRender.bounds.size.x + (padding * 2.0f)) /
+		typeBackground.GetComponent<SpriteRenderer> ().bounds.size.x * typeBackground.transform.localScale.x, 
+		typeBackground.transform.localScale.y * verticalSizeReduction, typeBackground.transform.localScale.z);
+
 		originalWordScale = typeBackground.transform.localScale;
 	}
 
@@ -59,19 +71,20 @@ public class TypeWindow : MonoBehaviour {
 		if (typeTarget.GetComponent<MeshRenderer> ().material.color.a < 0.9f)
 			return;
 		if (!this.name.Equals("")) {
+			AudioSource.PlayClipAtPoint(typeSound, Vector3.zero, windowVolume);
 			this.name = this.name.Substring (1);
 			typeTarget.GetComponent<TextMesh> ().text = 
 				typeTarget.GetComponent<TextMesh> ().text.Substring (1);
 			MeshRenderer meshRender = typeTarget.GetComponent<MeshRenderer> ();
-			if (meshRender.bounds.size.x + (padding * 2.0f) < typeBackground.GetComponent<SpriteRenderer> ().bounds.size.x) {
-				typeBackground.transform.localScale = new Vector3 ((meshRender.bounds.size.x + (padding * 2.0f)) /
-				typeBackground.GetComponent<SpriteRenderer> ().bounds.size.x * typeBackground.transform.localScale.x, 
-				typeBackground.transform.localScale.y, typeBackground.transform.localScale.z);
-			}
+			typeBackground.transform.localScale = new Vector3 ((meshRender.bounds.size.x + (padding * 2.0f)) /
+			typeBackground.GetComponent<SpriteRenderer> ().bounds.size.x * typeBackground.transform.localScale.x, 
+			typeBackground.transform.localScale.y, typeBackground.transform.localScale.z);
+
 			currentPulse = PulseType.IN;
 			if (this.name.Equals (""))
 			{
 				startFadeTime = time;
+				AudioSource.PlayClipAtPoint(exitSound, Vector3.zero, windowVolume);
 				currentFade = FadeType.FADEOUT;
 			}
 		}
