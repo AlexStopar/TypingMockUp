@@ -29,7 +29,7 @@ public class TextMaster : MonoBehaviour {
 	void Start () {
 		createdWords = new List<GameObject> ();
 		possibleWords = new List<WordType> ();
-		LoadWords ("Assets/Resources/WordLists/LongWordList.txt");
+		LoadWords ("Assets/Resources/WordLists/BeginnerWordList.txt");
 		typeFont = (Font)Resources.Load("Fonts/unispace");
 		currentWord = possibleWords[Random.Range (0, possibleWords.Count)];
 		currentLine = 0;
