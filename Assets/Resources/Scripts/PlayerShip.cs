@@ -9,9 +9,18 @@ public class PlayerShip : MonoBehaviour {
 	public float maxVelocity = 0.4f;
 	public Vector3 targetPoint;
 	public float turnSpeed = 0.01f;
+	public Vector3 gunLocation = new Vector3(0.0f, 0.2f, 0.0f);
+	GameObject gun;
 	// Use this for initialization
 	void Start () {
-		targetPoint = Vector3.zero;
+		targetPoint = Vector3.up * 4.0f;
+		gun = new GameObject ("Gun");
+		gun.AddComponent<PlayerShot> ();
+		gun.transform.parent = this.transform;
+		gunLocation = GameObject.Find ("playership").GetComponentsInChildren
+			<MeshRenderer> () [0].bounds.size.x * Vector3.up / 3.0f;
+		gun.transform.localPosition = gunLocation;
+		gun.GetComponent<PlayerShot> ().SetTargetPoint (targetPoint);
 	}
 	
 	// Update is called once per frame
@@ -32,9 +41,11 @@ public class PlayerShip : MonoBehaviour {
 			this.transform.Translate (Vector3.right * (oldVelocity + currentVelocity) / 2.0f);
 		} else {
 			currentVelocity = 0.0f;
-			targetPoint = new Vector3(Random.Range(-5.0f, 5.0f), 0.0f, 0.0f);
+			targetPoint = new Vector3(Random.Range(-5.0f, 5.0f), 4.0f, 0.0f);
+			gun.GetComponent<PlayerShot> ().SetTargetPoint (targetPoint);
 		}
 		Turn (Time.time);
+
 	}
 
 	void Turn(float time)

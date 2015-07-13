@@ -1,10 +1,11 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Resources\Scripts\PlayerShip.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Resources\Scripts\PlayerShot.cs">
     <Files>
+      <File FileName="Assets\Resources\Scripts\PlayerShot.cs" Line="8" Column="27" />
+      <File FileName="Assets\Resources\Scripts\PlayerShip.cs" Line="21" Column="56" />
       <File FileName="Assets\Resources\Scripts\TextMaster.cs" Line="32" Column="58" />
-      <File FileName="Assets\Resources\Scripts\TypeWindow.cs" Line="98" Column="140" />
-      <File FileName="Assets\Resources\Scripts\PlayerShip.cs" Line="7" Column="37" />
+      <File FileName="Assets\Resources\Scripts\TypeWindow.cs" Line="88" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

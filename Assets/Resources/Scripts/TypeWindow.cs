@@ -84,6 +84,8 @@ public class TypeWindow : MonoBehaviour {
 			if (this.name.Equals (""))
 			{
 				startFadeTime = time;
+				GameObject gun = GameObject.Find("Gun");
+				gun.GetComponent<PlayerShot>().Shoot();
 				AudioSource.PlayClipAtPoint(exitSound, Vector3.zero, windowVolume);
 				currentFade = FadeType.FADEOUT;
 			}
