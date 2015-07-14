@@ -46,10 +46,10 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\Resources\Scripts\PlayerShip.cs" />
-     <Compile Include="Assets\Resources\Scripts\PlayerShot.cs" />
-     <Compile Include="Assets\Resources\Scripts\TextMaster.cs" />
-     <Compile Include="Assets\Resources\Scripts\TypeWindow.cs" />
+     <Compile Include="Assets\Scripts\PlayerShip.cs" />
+     <Compile Include="Assets\Scripts\PlayerShot.cs" />
+     <Compile Include="Assets\Scripts\TextMaster.cs" />
+     <Compile Include="Assets\Scripts\TypeWindow.cs" />
      <None Include="Assets\Resources\WordLists\LongWordList.txt" />
      <None Include="Assets\Resources\WordLists\BeginnerWordList.txt" />
  <Reference Include="UnityEngine.UI">
